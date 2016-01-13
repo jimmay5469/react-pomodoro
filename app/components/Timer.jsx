@@ -5,6 +5,7 @@ require('moment-duration-format');
 module.exports = React.createClass({
   propTypes: {
     minutes: React.PropTypes.number.isRequired,
+    onStart: React.PropTypes.func,
     onComplete: React.PropTypes.func
   },
   getInitialState() {
@@ -18,8 +19,12 @@ module.exports = React.createClass({
   },
 
   start() {
-    this.setState({start: moment()});
+    var start = Date.now();
+    this.setState({start});
     this.interval = setInterval(this.updateDuration, 50);
+    if(this.props.onStart) {
+      this.props.onStart(start);
+    }
   },
   updateDuration() {
     if(this.state.start) {
