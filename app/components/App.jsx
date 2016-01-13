@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Timer = require('./Timer.jsx');
+var moment = require('moment');
 
 const TimerTypes = {
   Pomodoro: 'Pomodoro',
@@ -45,15 +46,41 @@ var App = React.createClass({
       timers = this.state.timers;
     }
 
+    var header;
+    if(this.state.activeTimer) {
+      header = `${this.state.activeTimer.type} time!`;
+    }
+    else {
+      header = 'Choose a timer:';
+    }
+
+    var history;
+    if(this.state.history.length) {
+      history = (
+        <div>
+          <h3>History</h3>
+          <ul>
+            {this.state.history.map((event)=> (
+              <li key={event.startTime}>{moment(event.startTime).format('LT')} - started {event.duration} minute {event.type.toLowerCase()}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
     return (
       <div>
-        {timers.map((timer)=> (
-          <Timer
-            key={timer.type}
-            minutes={timer.duration}
-            onStart={this.timerStarted.bind(this, timer)}
-            onComplete={this.timerFinished} />
-        ))}
+        <h3>{header}</h3>
+        <div>
+          {timers.map((timer)=> (
+            <Timer
+              key={timer.type}
+              minutes={timer.duration}
+              onStart={this.timerStarted.bind(this, timer)}
+              onComplete={this.timerFinished} />
+          ))}
+        </div>
+        {history}
       </div>
     );
   }
